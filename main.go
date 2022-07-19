@@ -1,57 +1,47 @@
 package main
 
 import (
+	"fmt"
+	"log"
+	"math/rand"
 	"net/http"
-	"os"
 
-	"github.com/julienschmidt/httprouter"
-	"github.com/kardianos/service"
+	"github.com/go-echarts/go-echarts/v2/charts"
+	"github.com/go-echarts/go-echarts/v2/opts"
+	"github.com/go-echarts/go-echarts/v2/types"
 )
 
-const serviceName = "CL2 Plotter WebService"
-const serviceDescription = "D3 web interface for CL2 Plotter"
+func randomData() []opts.LineData {
 
-type program struct{}
+	data := make([]opts.LineData, 0)
+	for i := 0; i < 7; i++ {
+		data = append(data, opts.LineData{Value: rand.Intn(300)})
+	}
+	return data
+}
+
+func httpserver(w http.ResponseWriter, _ *http.Request) {
+
+	line := charts.NewLine()
+
+	line.SetGlobalOptions(
+		charts.WithInitializationOpts(opts.Initialization{Theme: types.ThemeWesteros}),
+		charts.WithTitleOpts(opts.Title{
+			Title:    "Line charts",
+			Subtitle: "Rendered by the http server",
+		}))
+
+	line.SetXAxis([]string{"Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"}).
+		AddSeries("Category A", randomData()).
+		AddSeries("Category B", randomData())
+
+	line.SetSeriesOptions(charts.WithLineChartOpts(opts.LineChart{Smooth: true}))
+	line.Render(w)
+}
 
 func main() {
-	logInfo("MAIN", serviceName+" starting...")
-	serviceConfig := &service.Config{
-		Name:        serviceName,
-		DisplayName: serviceName,
-		Description: serviceDescription,
-	}
-	prg := &program{}
-	s, err := service.New(prg, serviceConfig)
-	if err != nil {
-		logError("MAIN", "Cannot start: "+err.Error())
-	}
-	err = s.Run()
-	if err != nil {
-		logError("MAIN", "Cannot start: "+err.Error())
-	}
-}
 
-func (p *program) Start(service.Service) error {
-	logInfo("MAIN", serviceName+" started")
-	go p.run()
-	return nil
-}
-
-func (p *program) Stop(service.Service) error {
-	logInfo("MAIN", serviceName+" stopped")
-	return nil
-}
-
-func (p *program) run() {
-	router := httprouter.New()
-	router.ServeFiles("/js/*filepath", http.Dir("js"))
-	router.ServeFiles("/css/*filepath", http.Dir("css"))
-	router.GET("/", homepage)
-	router.POST("/get_timeline_data", getTimeLineData)
-	err := http.ListenAndServe(":80", router)
-	if err != nil {
-		logError("MAIN", "Problem starting service: "+err.Error())
-		os.Exit(-1)
-	}
-	logInfo("MAIN", serviceName+" running")
+	http.HandleFunc("/", httpserver)
+	fmt.Println("Server started at port 8081")
+	log.Fatal(http.ListenAndServe(":8081", nil))
 }
