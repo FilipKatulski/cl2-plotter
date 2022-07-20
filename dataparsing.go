@@ -1,13 +1,3 @@
-/*
- * ----------------------------------------------------------------------------
- * "THE BEER-WARE LICENSE" (Revision 42):
- * <filip.katulski@cern.ch> wrote this file.  As long as you retain this notice
- * you can do whatever you want with this stuff. If we meet some day, and you
- * think this stuff is worth it, you can buy me a beer in return.
- * 																Filip Katulski
- * ----------------------------------------------------------------------------
- */
-
 package main
 
 import (
@@ -17,6 +7,7 @@ import (
 	"image/color"
 	"log"
 	"math/rand"
+	"net/http"
 	"os"
 	"path/filepath"
 	"reflect"
@@ -26,12 +17,18 @@ import (
 
 	"github.com/benoitmasson/plotters/piechart"
 	figure "github.com/common-nighthawk/go-figure"
+	"github.com/go-echarts/go-echarts/v2/charts"
+	"github.com/go-echarts/go-echarts/v2/opts"
+	"github.com/go-echarts/go-echarts/v2/types"
 	"github.com/go-gota/gota/dataframe"
 	"github.com/go-gota/gota/series"
 
-	//"go-hep.org/x/hep/hplot"
 	"gonum.org/v1/plot"
 	"gonum.org/v1/plot/plotter"
+
+	"github.com/go-echarts/go-echarts/v2/charts"
+	"github.com/go-echarts/go-echarts/v2/opts"
+	"github.com/go-echarts/go-echarts/v2/types"
 )
 
 var (
@@ -201,6 +198,7 @@ func slicingData(dat []TimelineData) [4]dataframe.DataFrame {
 }
 
 func plotTimeline(dat []TimelineData, PodStateFilterSelector string) {
+
 	slicedData := slicingData(dat)
 
 	CreatedDf := slicedData[0]
@@ -226,10 +224,35 @@ func plotTimeline(dat []TimelineData, PodStateFilterSelector string) {
 	runValues := createDataForTimelinePlotting(parseTimelineDf(&RunDf, minimalVal, "ToUnix"))
 	watchValues := createDataForTimelinePlotting(parseTimelineDf(&WatchedDf, minimalVal, "ToUnix"))
 
+	fmt.Println("createdValues: ", createdValues, reflect.TypeOf(createdValues))
+
 	err := createTimelinePlot("timeline.png", createdValues, scheduledValues, runValues, watchValues)
 	if err != nil {
 		log.Fatalf("could not plot the data: %v", err)
 	}
+}
+
+func createHttpTimelinePlot(w http.ResponseWriter, _ *http.Request, created DataForPlotting, scheduled DataForPlotting, run DataForPlotting, watch DataForPlotting) error {
+
+	line := charts.NewLine()
+
+	line.SetGlobalOptions(
+		charts.WithInitializationOpts(opts.Initialization{Theme: types.ThemeWesteros}),
+		charts.WithTitleOpts(opts.Title{
+			Title:    "Line charts",
+			Subtitle: "Rendered by the http server",
+		}))
+
+	for 
+
+	line.SetXAxis([]string{"Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"}).
+		AddSeries("Category A", randomData()).
+		AddSeries("Category B", randomData())
+
+	line.SetSeriesOptions(charts.WithLineChartOpts(opts.LineChart{Smooth: false}))
+	line.Render(w)
+
+	return nil
 }
 
 func parseTimelineDf(df *dataframe.DataFrame, minVal int, groupingCol string) map[string]dataframe.DataFrame {
@@ -613,7 +636,7 @@ func initFlags() {
 	flag.Parse()
 }
 
-func main() {
+func parsing() {
 	displayHeader()
 	initFlags()
 
