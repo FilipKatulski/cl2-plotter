@@ -25,7 +25,17 @@ func randomData() []opts.LineData {
 
 	data := make([]opts.LineData, 0)
 	for i := 0; i < 7; i++ {
-		data = append(data, opts.LineData{Value: rand.Intn(300)})
+		data = append(data, opts.LineData{Value: rand.Intn(300), XAxisIndex: rand.Intn(300)})
+	}
+	return data
+}
+
+func randomScatterData() []opts.ScatterData {
+
+	data := make([]opts.ScatterData, 0)
+
+	for i := 0; i < 7; i++ {
+		data = append(data, opts.ScatterData{Value: rand.Intn(300)})
 	}
 	return data
 }
@@ -35,18 +45,29 @@ func httpserver(w http.ResponseWriter, _ *http.Request) {
 	line := charts.NewLine()
 
 	line.SetGlobalOptions(
-		charts.WithInitializationOpts(opts.Initialization{Theme: types.ThemeWesteros}),
+		charts.WithInitializationOpts(opts.Initialization{Theme: types.ThemeInfographic}),
 		charts.WithTitleOpts(opts.Title{
 			Title:    "Line charts",
 			Subtitle: "Rendered by the http server",
 		}))
 
-	line.SetXAxis([]string{"Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"}).
-		AddSeries("Category A", randomData()).
-		AddSeries("Category B", randomData())
+	line.SetXAxis([]int{0, 1, 300}).
+		AddSeries("Category A", randomData())
 
 	line.SetSeriesOptions(charts.WithLineChartOpts(opts.LineChart{Smooth: false}))
 	line.Render(w)
+
+	scatter := charts.NewScatter()
+	scatter.SetGlobalOptions(
+		charts.WithInitializationOpts(opts.Initialization{Theme: types.ThemeEssos}),
+		charts.WithTitleOpts(opts.Title{
+			Title:    "Test scatter",
+			Subtitle: "Rendered test scatter",
+		}))
+	scatter.SetXAxis(10).
+		AddSeries("Cat 1", randomScatterData())
+	scatter.Render(w)
+
 }
 
 func main() {

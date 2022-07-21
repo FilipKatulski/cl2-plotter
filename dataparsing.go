@@ -25,10 +25,6 @@ import (
 
 	"gonum.org/v1/plot"
 	"gonum.org/v1/plot/plotter"
-
-	"github.com/go-echarts/go-echarts/v2/charts"
-	"github.com/go-echarts/go-echarts/v2/opts"
-	"github.com/go-echarts/go-echarts/v2/types"
 )
 
 var (
@@ -242,8 +238,6 @@ func createHttpTimelinePlot(w http.ResponseWriter, _ *http.Request, created Data
 			Title:    "Line charts",
 			Subtitle: "Rendered by the http server",
 		}))
-
-	for 
 
 	line.SetXAxis([]string{"Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"}).
 		AddSeries("Category A", randomData()).
