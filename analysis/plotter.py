@@ -6,12 +6,14 @@
 # 																Filip Katulski
 # ----------------------------------------------------------------------------
 
-import os, sys
+import os
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
 import plotly.express as px
+import plotly.graph_objects as gobj
+from plotly.subplots import make_subplots
 import argparse
 from time import sleep
 
@@ -69,7 +71,7 @@ def timeline_plotting(filepath: str):
     plt.show()
 
 
-def histogram_plotting(filepath: str):
+def histogram_plotting(filepath: str, num_bins):
     """
     Loads CSV files and saves them in a data array format for Timeline plots. 
     """
@@ -79,23 +81,40 @@ def histogram_plotting(filepath: str):
     df = df[df['pod_state_filter'] == 'Stateless']
 
     created_df = df[df['Transition']=='{create schedule 0s}'].sort_values('diff')
-    scheduled_df = df[df['Transition']=='{create schedule 0s}'].sort_values('diff')
     run_df = df[df['Transition']=='{schedule run 0s}'].sort_values('diff')
     watched_df = df[df['Transition']=='{run watch 0s}'].sort_values('diff') 
 
-    fig = plt.figure(figsize=(15, 30))
-    fig.subplots_adjust(hspace=0.7, wspace=0.7)
-    ax = fig.add_subplot(2,2,1)
-    ax1, ax2 = _create_histogram(scheduled_df)
-    ax = fig.add_subplot(2,2,2)
-    ax1, ax2 = _create_histogram(created_df)
-    ax = fig.add_subplot(2,2,3)
-    ax1, ax2 = _create_histogram(run_df)
-    ax = fig.add_subplot(2,2,4)
-    ax1, ax2 = _create_histogram(watched_df)
+    fig = make_subplots(rows=3, cols=1)
 
-    plt.show()
-
+    fig = make_subplots(rows=3, cols=1)
+    fig = gobj.Figure()
+    fig.add_trace(gobj.Histogram(x=created_df['diff'], nbinsx=num_bins))
+    fig.update_layout(
+    autosize=False,
+    width=1600,
+    height=800)
+    
+    fig.show()
+    
+    fig = make_subplots(rows=3, cols=1)
+    fig = gobj.Figure()
+    fig.add_trace(gobj.Histogram(x=run_df['diff'], nbinsx=num_bins))
+    fig.update_layout(
+    autosize=False,
+    width=1600,
+    height=800)
+    
+    fig.show()
+    
+    fig = make_subplots(rows=3, cols=1)
+    fig = gobj.Figure()
+    fig.add_trace(gobj.Histogram(x=watched_df['diff'], nbinsx=num_bins))
+    fig.update_layout(
+    autosize=False,
+    width=1500,
+    height=800)
+    
+    fig.show()
 
 def _histogram_statistics():
     # TODO 
@@ -105,7 +124,7 @@ def _create_histogram(df: pd.DataFrame):
     sns.set(style="whitegrid")
     ax1 = sns.histplot(data=df['diff'], bins=100)
     ax2 = plt.twinx()
-    ax2 = sns.histplot(data=df['diff'], bins=100, cumulative=True, element="step", fill=False)
+    ax2 = sns.histplot(data=df['diff'], bins=100, cumulative=True, element="poly", fill=False)
     return ax1, ax2
 
 def _sum_rows(series: pd.Series) -> pd.Series:
@@ -137,7 +156,7 @@ def main():
     if args.input:
         # TODO: Implement an argument to select plot types
         # timeline_plotting(args.input)
-        histogram_plotting(args.input)
+        histogram_plotting(args.input, num_bins=200)
 
 
 if __name__ == "__main__":
