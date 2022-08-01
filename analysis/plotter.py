@@ -84,6 +84,18 @@ def histogram_plotting(filepath: str, num_bins):
     run_df = df[df['Transition']=='{schedule run 0s}'].sort_values('diff')
     watched_df = df[df['Transition']=='{run watch 0s}'].sort_values('diff') 
 
+    '''
+    fig, ax = plt.subplots()
+    sns.set(style="whitegrid")
+    sns.histplot(data=created_df['diff'], color="skyblue", label="Difference", bins=num_bins)
+    plt.legend(loc='upper right')
+    ax2 = ax.twinx()
+    sns.histplot(data=created_df['diff'], color="red", label="Cumulative", element="step", cumulative=True, fill=False, bins=num_bins)
+
+    plt.legend(loc='upper left')
+    plt.show()
+    '''
+
     fig = make_subplots(rows=3, cols=1)
 
     fig = make_subplots(rows=3, cols=1)
