@@ -1,5 +1,5 @@
 numpy
 pandas
-art
-seaborn
 plotly
+# Additional library:
+art
