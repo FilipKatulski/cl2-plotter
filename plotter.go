@@ -19,7 +19,6 @@ import (
 	"math/rand"
 	"os"
 	"path/filepath"
-	"reflect"
 	"sort"
 	"strconv"
 	"strings"
@@ -303,6 +302,7 @@ type myTicks struct{}
 
 func (myTicks) Ticks(min, max float64) []plot.Tick {
 
+	//TODO: Find a way to make passing min/max working, for now we have to overwrite them
 	min = 0.0
 
 	max = 30.0
@@ -339,19 +339,8 @@ func createTimelinePlot(filename string, created DataForPlotting, scheduled Data
 
 	//TODO: Implement programmatically the way to get more Ticks than 3 major and some minor
 
-	timcks := plot.DefaultTicks{}.Ticks(0.0, 10.0)
-	timcks = myTicks{}.Ticks(0.0, 10.0)
-	fmt.Println(timcks, reflect.TypeOf(timcks))
+	myTicks{}.Ticks(0.0, 10.0)
 	p.X.Tick.Marker = myTicks{}
-
-	for _, elem := range timcks {
-
-		fmt.Println(elem)
-	}
-
-	fmt.Println(myTicks{})
-
-	fmt.Println(p.X.Tick.Marker, reflect.TypeOf(p.X.Tick.Marker))
 
 	p.Y.Label.Text = "Number of Pods"
 	grid := plotter.NewGrid()
@@ -361,8 +350,6 @@ func createTimelinePlot(filename string, created DataForPlotting, scheduled Data
 	addNewTimeLine("Scheduled", p, scheduled)
 	addNewTimeLine("Running", p, run)
 	addNewTimeLine("Watched", p, watch)
-
-	fmt.Println(p.X.Tick.Marker, reflect.TypeOf(p.X.Tick.Marker))
 
 	wt, err := p.WriterTo(1024, 512, "png")
 	if err != nil {
