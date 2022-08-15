@@ -73,10 +73,3 @@ There is also an interactive data plotting module created with Python and Plotly
 ![Create to Schedule histogram](/example-plots/createtoschedule-hist.png "Create to Schedule histogram")
 
 ![Pie Chart](/example-plots/piechart.png "Pie Chart")
-
-
-# Jupyter Notebook analysis module
-
-There is also an interactive data plotting module created with Python and Plotly with Jupyter Notebook. Please take a look at the 'analysis' folder.
-
-
