@@ -33,7 +33,6 @@ Usage of plotter:
     	Specify the state of Pods.  (default "Stateless")
 ```
 
-
 ## Format of CSV files
 
 Input files have to follow a specific format in order to be processed successfully: 
@@ -62,7 +61,12 @@ from_unix - Starting point of the Pod's phase
 to_unix - Ending point of the Pod's phase 
 
 
-## Plot examples
+# Jupyter Notebook analysis module
+
+There is also an interactive data plotting module created with Python and Plotly with Jupyter Notebook. Please take a look at the 'analysis' folder.
+
+
+# Go module plot examples
 
 ![Timeline plot](/example-plots/timeline.png "Timeline plot")
 
