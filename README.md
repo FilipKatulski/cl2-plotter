@@ -2,7 +2,7 @@
 
 This module was created to plot data created with "cl2 density" tests. Creates PNG files of the Timeline, histograms of each phase and a Piechart with cumulative time of main phases.
 
-Created by Filip Katulski <filip.katulski@cern.ch>, TDAQ ATLAS project, CERN 
+Created by me, FilipKatulski, during my cooperation with EP-ADT-DQ group at ATLAS project, CERN 
 
 ## Running Plotter 
 
